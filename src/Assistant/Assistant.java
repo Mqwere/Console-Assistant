@@ -46,6 +46,11 @@ public class Assistant {
 		//clientContact.setCaretPosition(clientContact.getDocument().getLength());
 	}
 	
+	public static String getTime() {
+		Date date = new Date();
+		return date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+	}
+	
 	public static void error(Object message) {
 		String output = new String();
 		if(message.getClass() == String.class) {
@@ -164,8 +169,7 @@ public class Assistant {
 				break;
 			case "TIME":
 				if(content.length==1) {
-					Date date = new Date();
-					write(date.getHours()+":"+date.getMinutes()+":"+date.getSeconds());
+					write(getTime());
 				}
 				break;
 				
