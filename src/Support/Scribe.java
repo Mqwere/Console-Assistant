@@ -2,15 +2,20 @@ package Support;
 
 import java.util.ArrayList;
 
+import Core.Assistant;
+import Core.Command;
+
 public class Scribe {
 	private ArrayList<String> logs = new ArrayList<String>();
 	private int maxLogCap;
 	private int currentLogId;
 	public boolean logsWereUsed = false;
 
+	public String lastInput = "";
+	public boolean suggestionUsed = true;
+
 	public String getStatus() {
-		String status = "Scribe Status:" + "\n  maxLogCap:    " 
-				+ Integer.toString(this.maxLogCap)
+		String status = "Scribe Status:" + "\n  maxLogCap:    " + Integer.toString(this.maxLogCap)
 				+ "\n  currentLogId: " + Integer.toString(this.currentLogId) + "\n  logsWereUsed: "
 				+ Boolean.toString(this.logsWereUsed) + "\n  logs.size():  " + Integer.toString(this.logs.size());
 
@@ -52,6 +57,68 @@ public class Scribe {
 		}
 	}
 
+	public String tabGuess(String input) {
+		String eval;
+		boolean skip = false;
+		if (suggestionUsed) {
+			eval = input.toUpperCase();
+			this.lastInput = input;
+		}
+		else {
+			eval = this.lastInput.toUpperCase();
+			skip = true;
+		}
+		
+		//communicate("Initiating tabGuess sequence for \""+eval+"\"");
+		
+		int size = eval.length();
+		if (size > 0) {
+			for(Command a: Command.values()) {
+				if(!suggestionUsed) {
+					if(input.equals(a.name())){
+						skip = false; 
+						//communicate(input+"is the same as a.name():"+a.name()); continue;
+					}
+					else {
+						if(skip) {
+							communicate("Skipping "+a.name());
+							continue;
+						}
+						else {
+							String diff = a.name().substring(0,size-1);
+							if(diff.length()==0) diff += a.name().charAt(0);
+							if(eval.equals(diff)) {
+								communicate("Found a Command! " + a.name());
+								suggestionUsed = false;
+								return a.name().toLowerCase();
+							}
+							else {
+								communicate(eval+" =/= "+diff);
+								continue;
+							}
+						}
+					}
+				}
+				else {
+					String diff = a.name().substring(0,size-1);
+					if(diff.length()==0) diff += a.name().charAt(0);
+					if(eval.equals(diff)) {
+						communicate("Found a Command! " + a.name());
+						suggestionUsed = false;
+						return a.name().toLowerCase();
+					}
+					else {
+						communicate(eval+" =/= "+diff);
+						continue;
+					}
+				}
+			}
+			return input;
+		} else {
+			return input;
+		}
+	}
+
 	public String downGoThemLogs() {
 		if (this.logsWereUsed) {
 			if (++this.currentLogId < this.logs.size())
@@ -74,5 +141,9 @@ public class Scribe {
 		this.checkSize();
 		this.logs.add(input);
 		this.currentLogId = this.logs.size() - 1;
+	}
+	
+	private void communicate(Object message) {
+		Assistant.write("Scribe",message);
 	}
 }

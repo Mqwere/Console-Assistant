@@ -1,4 +1,4 @@
-package Assistant;
+package Core;
 
 import java.util.Date;
 
@@ -18,7 +18,7 @@ public class Assistant {
 	
 	public static void main(String[] args) {
 		UI = new UI();
-		showInfo();
+		//showInfo();
 	}
 	
 	private static void showInfo() {
@@ -26,6 +26,7 @@ public class Assistant {
 		//clientContact.setCaretPosition(clientContact.getDocument().getLength());
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static String getDate() {
 		Date date = new Date();
 		
@@ -62,6 +63,7 @@ public class Assistant {
 		return dayAdd + date.getDate() + "." + monthAdd + (date.getMonth()+1) + "." + (date.getYear()+1900) + ", " + weekDay; 
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static String getTime() {
 		Date date = new Date();
 		String hadd = date.getHours()>9? 	"":"0",
@@ -166,26 +168,28 @@ public class Assistant {
 	public static void answer(String input) {
 		input = input.toUpperCase();
 		String[] content = input.split(" ");
-		switch(content[0]) {
-			case "ABOUT":
-			case "INFO":
-				showInfo();
-				break;
-				
-			case "EXIT":
-			case "CLOSE":
-				System.exit(0);
-				break;
-			
-			case "DATE":
-				if(content.length==1) {
-					write(getDate());
-				}
-				break;
-				
-			default:
-				write("Unknown command.");
-				break;
+		Command cmd = null;
+		for(Command a: Command.values()) {
+			if(content[0].contentEquals(a.name())) cmd = a;
+		}
+		
+		switch(cmd) {
+		case ABOUT:
+		case INFO:
+			showInfo();
+			break;
+		case CLOSE:
+		case EXIT:
+			System.exit(0);
+			break;
+		case DATE:
+			if(content.length==1) {
+				write(getDate());
+			}
+			break;
+		default:
+			write("Unknown command.");
+			break;
 		}
 	}
 }

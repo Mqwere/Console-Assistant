@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,7 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import Assistant.Assistant;
+import Core.Assistant;
 import Support.Scribe;
 
 public class UI extends JFrame implements ActionListener, KeyListener {
@@ -50,7 +51,11 @@ public class UI extends JFrame implements ActionListener, KeyListener {
 		options.setCursor(cursor);
 		exitItem.setCursor(cursor);
 
-		setTitle("Console Assistant");
+		Random rand = new Random();
+		if(rand.nextInt()%100 == 0) 
+			setTitle("BootLog");
+		else
+			setTitle("Console Assistant");
 		setSize(350, 400);
 		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -69,7 +74,7 @@ public class UI extends JFrame implements ActionListener, KeyListener {
 
 		area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 		panel.add(scrollArea);
-		panel.add(inputField);
+		panel.add(inputField); inputField.setFocusTraversalKeysEnabled(false);
 		panel.add(tLabel);
 		panel.add(exitItem);
 		panel.add(bar);
@@ -109,6 +114,7 @@ public class UI extends JFrame implements ActionListener, KeyListener {
 		String message;
 		if (code == KeyEvent.VK_ENTER) {
 			message = inputField.getText();
+			slave.suggestionUsed = true;
 			if (message.length() > 0) {
 				area.append("<" + Assistant.getTime() + ">: " + message + "\n");
 				area.setCaretPosition(area.getDocument().getLength());
@@ -139,8 +145,12 @@ public class UI extends JFrame implements ActionListener, KeyListener {
 				Assistant.error(e.getMessage() + "\n" + slave.getStatus());
 			}
 		} else if (code == KeyEvent.VK_TAB) {
-
+			this.inputField.setText(slave.tabGuess(this.inputField.getText()));
+			this.inputField.requestFocus();
 		}
+		
+		
+		if(code != KeyEvent.VK_TAB) slave.suggestionUsed = true;
 	}
 
 	@Override
