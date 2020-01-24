@@ -7,5 +7,7 @@ public enum Command {
 	EXIT,
 	CLOSE,
 	
-	DATE
+	DATE,
+	
+	UNKNOWN
 }

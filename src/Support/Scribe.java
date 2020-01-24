@@ -81,19 +81,19 @@ public class Scribe {
 					}
 					else {
 						if(skip) {
-							communicate("Skipping "+a.name());
+							//communicate("Skipping "+a.name());
 							continue;
 						}
 						else {
 							String diff = a.name().substring(0,size-1);
 							if(diff.length()==0) diff += a.name().charAt(0);
 							if(eval.equals(diff)) {
-								communicate("Found a Command! " + a.name());
+								//communicate("Found a Command! " + a.name());
 								suggestionUsed = false;
 								return a.name().toLowerCase();
 							}
 							else {
-								communicate(eval+" =/= "+diff);
+								//communicate(eval+" =/= "+diff);
 								continue;
 							}
 						}
@@ -103,17 +103,21 @@ public class Scribe {
 					String diff = a.name().substring(0,size-1);
 					if(diff.length()==0) diff += a.name().charAt(0);
 					if(eval.equals(diff)) {
-						communicate("Found a Command! " + a.name());
+						//communicate("Found a Command! " + a.name());
 						suggestionUsed = false;
 						return a.name().toLowerCase();
 					}
 					else {
-						communicate(eval+" =/= "+diff);
+						//communicate(eval+" =/= "+diff);
 						continue;
 					}
 				}
 			}
-			return input;
+			if (suggestionUsed) return input;
+			else{
+				this.suggestionUsed = true;
+				return this.lastInput;
+			}
 		} else {
 			return input;
 		}
@@ -141,6 +145,14 @@ public class Scribe {
 		this.checkSize();
 		this.logs.add(input);
 		this.currentLogId = this.logs.size() - 1;
+	}
+	
+	public static Integer tryIntParse(String input) {
+		try {
+			int result = Integer.parseInt(input);
+			return result;
+		}
+		catch(Exception e) {return null;}
 	}
 	
 	private void communicate(Object message) {
