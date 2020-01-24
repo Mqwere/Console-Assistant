@@ -74,6 +74,7 @@ public class Scribe {
 		int size = eval.length();
 		if (size > 0) {
 			for(Command a: Command.values()) {
+				if(a == Command.UNKNOWN) continue;
 				if(!suggestionUsed) {
 					if(input.equals(a.name())){
 						skip = false; 
@@ -85,7 +86,9 @@ public class Scribe {
 							continue;
 						}
 						else {
-							String diff = a.name().substring(0,size-1);
+							String diff = a.name().substring(0,size);
+							communicate(diff);
+							communicate(a.name().substring(0,size-1));
 							if(diff.length()==0) diff += a.name().charAt(0);
 							if(eval.equals(diff)) {
 								//communicate("Found a Command! " + a.name());
@@ -100,7 +103,10 @@ public class Scribe {
 					}
 				}
 				else {
-					String diff = a.name().substring(0,size-1);
+					String diff;
+					if(size<=a.name().length()) 
+						diff = a.name().substring(0,size);
+					else continue;
 					if(diff.length()==0) diff += a.name().charAt(0);
 					if(eval.equals(diff)) {
 						//communicate("Found a Command! " + a.name());

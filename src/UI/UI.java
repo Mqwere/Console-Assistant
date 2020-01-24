@@ -15,6 +15,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -35,16 +36,16 @@ public class UI extends JFrame implements ActionListener, KeyListener {
 	JMenuItem exitItem = new JMenuItem("Zakończ program");
 
 	JTextArea area = new JTextArea();
-	JScrollPane scrollArea = new JScrollPane(area);
+	public JScrollPane scrollArea = new JScrollPane(area);
 
 	JLabel tLabel = new JLabel(">:");
-	JTextField inputField = new JTextField();
+	public JTextField inputField = new JTextField();
 
 	private void placeConetent() {
-		bar.setBounds(0, 0, 340, 20);
-		scrollArea.setBounds(10, 30, 315, 290);
+		bar.setBounds(0, 0, Assistant.AREA_WIDTH+35, 20);
+		scrollArea.setBounds(10, 30, Assistant.AREA_WIDTH, 290);
 		tLabel.setBounds(10, 330, 20, 20);
-		inputField.setBounds(30, 330, 295, 20);
+		inputField.setBounds(30, 330, Assistant.AREA_WIDTH-20, 20);
 	}
 
 	public UI() {
@@ -56,7 +57,7 @@ public class UI extends JFrame implements ActionListener, KeyListener {
 			setTitle("BootLog");
 		else
 			setTitle("Console Assistant");
-		setSize(350, 400);
+		setSize(Assistant.AREA_WIDTH+35, 400);
 		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
@@ -105,6 +106,11 @@ public class UI extends JFrame implements ActionListener, KeyListener {
 
 	private void writeToField(String input) {
 		this.inputField.setText(input);
+	}
+	
+	public void scrollDown() {
+        JScrollBar sb = scrollArea.getVerticalScrollBar();
+        sb.setValue(sb.getMaximum());
 	}
 
 	@Override

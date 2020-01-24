@@ -2,12 +2,13 @@ package Core;
 
 import java.util.Date;
 
+import Support.ProcessHandler;
 import Support.Scribe;
 import UI.UI;
 
 public class Assistant {
 	public static UI UI;
-	public static final int AREA_WIDTH = 315;
+	public static final int AREA_WIDTH = 420;
 	public static final int LINE_LENGHT = ((AREA_WIDTH / 10));
 	public static String APP_INFO = "                INFO:\n" + "        Console Assistant App\n"
 			+ "        A smol console assistant\n" + "        Project started 27 may 2019\n"
@@ -23,6 +24,14 @@ public class Assistant {
 		// clientContact.setCaretPosition(clientContact.getDocument().getLength());
 	}
 
+	public static void sleep(long milis) {
+		try {
+			Thread.sleep(milis);
+		} catch (InterruptedException e) {
+			error(e);
+		}
+	}
+	
 	public static String getDate() {
 		return getDate(0);
 	}
@@ -223,11 +232,24 @@ public class Assistant {
 				}
 			}
 			break;
+			
+		case CMD:
+			String boop = "";
+			for(int i=1;i<content.length;i++) boop += content[i] + " ";
+			write("Initiating "+boop);
+			String[] newkwi = new String[content.length-1];
+			for(int i=1; i<content.length;i++) {
+				newkwi[i-1] = content[i].toLowerCase();
+			}
+			//ProcessHandler.run(newkwi);
+			new Thread(new ProcessHandler(newkwi)).start();
+			break;
 
 		case UNKNOWN:
 		default:
 			write("Unknown command.");
 			break;
 		}
+	    Assistant.UI.scrollDown();
 	}
 }

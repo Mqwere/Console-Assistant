@@ -9,5 +9,7 @@ public enum Command {
 	
 	DATE,
 	
+	CMD,
+	
 	UNKNOWN
 }
