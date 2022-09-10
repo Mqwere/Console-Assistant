@@ -14,21 +14,24 @@ public class Scribe {
 	public String lastInput = "";
 	public boolean suggestionUsed = true;
 
-	public String getStatus() {
+	public String getStatus() 
+	{
 		String status = "Scribe Status:" + "\n  maxLogCap:    " + Integer.toString(this.maxLogCap)
 				+ "\n  currentLogId: " + Integer.toString(this.currentLogId) + "\n  logsWereUsed: "
 				+ Boolean.toString(this.logsWereUsed) + "\n  logs.size():  " + Integer.toString(this.logs.size());
 
 		return status;
 	}
-
-	public Scribe(int capacity) {
+	
+	public Scribe(int capacity) 
+	{
 		this.maxLogCap = capacity;
 		this.currentLogId = 0;
 		this.logsWereUsed = false;
 	}
 
-	private void checkSize() {
+	private void checkSize() 
+	{
 		if (this.logs.size() >= this.maxLogCap) {
 			ArrayList<String> temp = new ArrayList<String>();
 			for (int i = 1; i < this.logs.size(); i++) {
@@ -39,40 +42,40 @@ public class Scribe {
 		}
 	}
 
-	public String upGoThemLogs() {
-		if (!this.logsWereUsed) {
+	public String upGoThemLogs() 
+	{
+		if (!this.logsWereUsed) 
+		{
 			this.logsWereUsed = true;
-			if (this.logs.size() > 0)
-				return logs.get(this.currentLogId);
-			else {
-				return null;
-			}
-		} else {
-			if (--this.currentLogId >= 0) {
-				return logs.get(this.currentLogId);
-			} else {
-				this.currentLogId++;
-				return null;
-			}
+			return this.logs.size() > 0 ? 
+					logs.get(this.currentLogId) : null;
+		} 
+		else {
+			return this.currentLogId > 0 ? 
+					logs.get(--this.currentLogId) : null;
 		}
 	}
 
-	public String tabGuess(String input) {
+	public String tabGuess(String input) 
+	{
 		String eval;
 		boolean skip = false;
-		if (suggestionUsed) {
+		
+		if (suggestionUsed) 
+		{
 			eval = input.toUpperCase();
 			this.lastInput = input;
 		}
-		else {
+		else 
+		{
 			eval = this.lastInput.toUpperCase();
 			skip = true;
 		}
 		
 		//communicate("Initiating tabGuess sequence for \""+eval+"\"");
 		
-		int size = eval.length();
-		if (size > 0) {
+		int evalLength = eval.length();
+		if (evalLength > 0) {
 			for(Command a: Command.values()) {
 				if(a == Command.UNKNOWN) continue;
 				if(!suggestionUsed) {
@@ -86,9 +89,9 @@ public class Scribe {
 							continue;
 						}
 						else {
-							String diff = a.name().substring(0,size);
+							String diff = a.name().substring(0,evalLength);
 							communicate(diff);
-							communicate(a.name().substring(0,size-1));
+							communicate(a.name().substring(0,evalLength-1));
 							if(diff.length()==0) diff += a.name().charAt(0);
 							if(eval.equals(diff)) {
 								//communicate("Found a Command! " + a.name());
@@ -103,20 +106,17 @@ public class Scribe {
 					}
 				}
 				else {
-					String diff;
-					if(size<=a.name().length()) 
-						diff = a.name().substring(0,size);
-					else continue;
-					if(diff.length()==0) diff += a.name().charAt(0);
+					if(evalLength > a.name().length()) continue;
+					
+					String diff = a.name().substring(0, (evalLength<1)? 1:evalLength);
+
 					if(eval.equals(diff)) {
 						//communicate("Found a Command! " + a.name());
 						suggestionUsed = false;
 						return a.name().toLowerCase();
 					}
-					else {
-						//communicate(eval+" =/= "+diff);
-						continue;
-					}
+
+					continue;
 				}
 			}
 			if (suggestionUsed) return input;
@@ -129,14 +129,14 @@ public class Scribe {
 		}
 	}
 
-	public String downGoThemLogs() {
-		if (this.logsWereUsed) {
-			if (++this.currentLogId < this.logs.size())
-				return logs.get(this.currentLogId);
-			else {
-				this.currentLogId--;
+	public String downGoThemLogs() 
+	{
+		if (this.logsWereUsed) 
+		{
+			if (this.currentLogId < this.logs.size() - 1)
+				return logs.get(++this.currentLogId);
+			else
 				this.logsWereUsed = false;
-			}
 		}
 		return null;
 	}
@@ -154,7 +154,8 @@ public class Scribe {
 	}
 	
 	public static Integer tryIntParse(String input) {
-		try {
+		try 
+		{
 			int result = Integer.parseInt(input);
 			return result;
 		}

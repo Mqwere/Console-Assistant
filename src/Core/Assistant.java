@@ -4,45 +4,41 @@ import java.util.Date;
 
 import Support.ProcessHandler;
 import Support.Scribe;
-import UI.UI;
+import UI.AssistantFrame;
 
 public class Assistant {
-	public static UI UI;
+	public static AssistantFrame assistantFrame;
+
+	public static Scribe scribe = new Scribe(20);
 	public static final int AREA_WIDTH = 420;
 	public static final int LINE_LENGHT = ((AREA_WIDTH / 10));
 	public static String APP_INFO = "                INFO:\n" + "        Console Assistant App\n"
 			+ "        A smol console assistant\n" + "        Project started 27 may 2019\n"
 			+ "        Author: Marcin Chrąchol\n";
 
-	public static void main(String[] args) {
-		UI = new UI();
-		// showInfo();
+	public static void main(String[] args) 
+	{
+		assistantFrame = new AssistantFrame();
 	}
 
 	private static void showInfo() {
-		UI.addToArea(APP_INFO);
-		// clientContact.setCaretPosition(clientContact.getDocument().getLength());
-	}
-
-	public static void sleep(long milis) {
-		try {
-			Thread.sleep(milis);
-		} catch (InterruptedException e) {
-			error(e);
-		}
+		assistantFrame.addToArea(APP_INFO);
 	}
 	
-	public static String getDate() {
+	public static String getDate() 
+	{
 		return getDate(0);
 	}
 
-	@SuppressWarnings("deprecation")
-	public static String getDate(long offset) {
+	public static String getDate(long offset) 
+	{
 		Date date = new Date(new Date().getTime() + 86400000 * offset);
 		return getDate(date);
 	}
-
-	public static String getDate(Date date) {
+	
+	@SuppressWarnings("deprecation")
+	public static String getDate(Date date) 
+	{
 		String dayAdd = date.getDate() > 9 ? "" : "0";
 		String monthAdd = date.getMonth() < 9 ? "0" : "";
 		String weekDay;
@@ -85,8 +81,14 @@ public class Assistant {
 
 		return hadd + date.getHours() + ":" + madd + date.getMinutes() + ":" + sadd + date.getSeconds();
 	}
-
-	public static void error(Object message) {
+	
+	public static void setInputEnabled(boolean enabled)
+	{
+		assistantFrame.setInputEnabled(enabled);
+	}
+	
+	public static void error(Object message) 
+	{
 		String output = new String();
 		if (message.getClass() == String.class) {
 			String obj = (String) message;
@@ -98,28 +100,36 @@ public class Assistant {
 		write("ERROR", output);
 	}
 
-	public static void print(Object message) {
-		if (message.getClass() == String.class) {
+	public static void print(Object message) 
+	{
+		if (message.getClass() == String.class) 
+		{
 			String obj = (String) message;
-			UI.addToArea(obj);
-		} else {
-			UI.addToArea(message.toString());
+			assistantFrame.addToArea(obj);
+		} 
+		else 
+		{
+			assistantFrame.addToArea(message.toString());
 		}
 	}
 
-	public static void sys(Object input) {
+	public static void sys(Object input) 
+	{
 		write("SYSTEM", input);
 	}
 
-	public static void log(Object input) {
+	public static void log(Object input)
+	{
 		write("LOG", input);
 	}
 
-	public static void write(Object input) {
+	public static void write(Object input)
+	{
 		write("ASSISTANT", input);
 	}
 
-	public static void write(String from, Object input) {
+	public static void write(String from, Object input) 
+	{
 		String mess;
 		String tab = new String("");
 		if (input.getClass() == String.class)
@@ -128,56 +138,81 @@ public class Assistant {
 			mess = input.toString();
 
 		int offset = 4 + from.length();
-		if (from.length() > 0) {
-			UI.addToArea("[" + from + "]: ");
-		} else {
+		if (from.length() > 0) 
+		{
+			assistantFrame.addToArea("[" + from + "]: ");
+		} 
+		else 
+		{
 			offset = 1;
-			UI.addToArea(" ");
+			assistantFrame.addToArea(" ");
 		}
 
 		for (int i = 0; i < offset; i++)
+		{
 			tab += " ";
-		if (mess.length() <= LINE_LENGHT) {
-			UI.addToArea(mess);
-		} else {
+		}
+		
+		if (mess.length() <= LINE_LENGHT) 
+		{
+			assistantFrame.addToArea(mess);
+		} 
+		else 
+		{
 			String[] messes = mess.split("\n");
 
-			for (int y = 0; y < messes.length; y++) {
+			for (int y = 0; y < messes.length; y++) 
+			{
 				String message = messes[y];
 				String[] pieces = message.split(" ");
 				int length = pieces.length, temp = 0;
-				for (int i = 0; i < length; i++) {
-					if (temp + pieces[i].length() > (LINE_LENGHT - offset)) {
-						if (pieces[i].length() > (LINE_LENGHT - offset)) {
+				for (int i = 0; i < length; i++) 
+				{
+					if (temp + pieces[i].length() > (LINE_LENGHT - offset)) 
+					{
+						if (pieces[i].length() > (LINE_LENGHT - offset)) 
+						{
 							if (temp != 0)
-								UI.addToArea(" ");
-							for (int x = 0; x < pieces[i].length(); x++) {
-								if (temp % (LINE_LENGHT - offset) == (LINE_LENGHT - offset) - 1) {
-									UI.addToArea("-" + "\n" + tab);
+							{
+								assistantFrame.addToArea(" ");
+							}
+							
+							for (int x = 0; x < pieces[i].length(); x++) 
+							{
+								if (temp % (LINE_LENGHT - offset) == (LINE_LENGHT - offset) - 1) 
+								{
+									assistantFrame.addToArea("-" + "\n" + tab);
 									temp = 0;
 								}
-								UI.addToArea(pieces[i].charAt(x));
+								assistantFrame.addToArea(pieces[i].charAt(x));
 								temp++;
 							}
-						} else {
-							UI.addToArea("\n" + tab + pieces[i]);
+						} 
+						else 
+						{
+							assistantFrame.addToArea("\n" + tab + pieces[i]);
 							temp = pieces[i].length();
 						}
-					} else {
+					} 
+					else 
+					{
 						if (temp != 0)
-							UI.addToArea(" ");
-						UI.addToArea(pieces[i]);
+						{
+							assistantFrame.addToArea(" ");
+						}
+						assistantFrame.addToArea(pieces[i]);
 						temp += pieces[i].length() + 1;
 					}
 				}
-				UI.addToArea("\n" + tab);
+				assistantFrame.addToArea("\n" + tab);
 			}
 		}
-		UI.addToArea("\n");
+		assistantFrame.addToArea("\n");
 	}
 
 	@SuppressWarnings("deprecation")
-	public static void answer(String input) {
+	public static void answer(String input) 
+	{
 		input = input.toUpperCase();
 		String[] content = input.split(" ");
 		Command cmd = null;
@@ -200,30 +235,49 @@ public class Assistant {
 			break;
 
 		case DATE:
-			if (content.length <= 1) {
+			if (content.length <= 1) 
+			{
 				write(getDate());
-			} else {
-				if (content[1].equals("IN") || content[1].equals("AFTER")) {
-					if (content.length >= 3) {
+			} 
+			else 
+			{
+				if (content[1].equals("IN") || content[1].equals("AFTER")) 
+				{
+					if (content.length >= 3) 
+					{
 						Integer value = Scribe.tryIntParse(content[2]);
 						if (value == null)
+						{
 							write(getDate());
-						else {
-							if(content.length >= 4 &&(!content[3].equals("DAYS")||!content[3].equals("D")||!content[3].equals("DAY"))) {
-								if(content[3].equals("WEEKS")||content[3].equals("W")) write(getDate(value*7));
-								else
-								if(content[3].equals("MONTHS")||content[3].equals("M")) {
-									Date date = new Date();
-									date.setMonth(date.getMonth()+value);
-									write(getDate(date));
+						}
+						else 
+						{
+							if(content.length >= 4 &&(!content[3].equals("DAYS")||!content[3].equals("D")||!content[3].equals("DAY"))) 
+							{
+								if(content[3].equals("WEEKS")||content[3].equals("W")) 
+								{
+									write(getDate(value*7));
 								}
 								else
-								if(content[3].equals("YEARS")||content[3].equals("Y")) {
-									Date date = new Date();
-									date.setYear(date.getYear()+value);
-									write(getDate(date));
+								{
+									if(content[3].equals("MONTHS")||content[3].equals("M")) 
+									{
+										Date date = new Date();
+										date.setMonth(date.getMonth()+value);
+										write(getDate(date));
+									}
+									else
+									if(content[3].equals("YEARS")||content[3].equals("Y")) 
+									{
+										Date date = new Date();
+										date.setYear(date.getYear()+value);
+										write(getDate(date));
+									}
+									else 
+									{
+										write(getDate(value));
+									}
 								}
-								else write(getDate(value));
 							}
 							else write(getDate(value));
 						}
@@ -250,6 +304,16 @@ public class Assistant {
 			write("Unknown command.");
 			break;
 		}
-	    Assistant.UI.scrollDown();
+		Assistant.assistantFrame.scrollDown();
+	}
+	
+	public static void executeWrapped(Runnable runnable)
+	{
+		try {
+			runnable.run();
+		} 
+		catch (Exception e) {
+			Assistant.error(e.getMessage() + "\n" + scribe.getStatus());
+		}
 	}
 }
