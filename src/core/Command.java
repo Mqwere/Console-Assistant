@@ -8,6 +8,7 @@ import util.CommandRunnable;
 import util.CommandSentenceInterpreter;
 import util.Converter;
 import util.Date;
+import util.ProcessHandler;
 
 public class Command implements CommandRunnable
 {
@@ -61,13 +62,36 @@ public class Command implements CommandRunnable
 		)
 		.build();
 	
+	private static final Command runCmdCommandThroughAssistant = 
+		new CommandBuilder()
+		.setTriggerKeywords("cmd")
+		.setRunnable(
+				(args) -> 
+				{
+					new Thread(new ProcessHandler(Assistant.assistantFrame, args)).start();
+				}
+			)
+		.build();
+	
+	private static final Command separateAllLettersWithinStringWithSpaces =
+			new CommandBuilder()
+			.setTriggerKeywords("hiperbolize", "separate", "sprt")
+			.setRunnable(
+					(args) -> 
+					{
+						
+					}
+				)
+			.build();
+	
 	public static void initialize()
 	{
 		commands = new ArrayList<>(
 			Arrays.asList(
 				printInfoAboutApp,
 				closeApp,
-				printDate
+				printDate,
+				runCmdCommandThroughAssistant
 			)
 		);
 	}

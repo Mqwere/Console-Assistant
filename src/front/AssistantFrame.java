@@ -18,6 +18,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import core.Assistant;
+import core.Command;
+import util.Date;
 
 public class AssistantFrame extends JFrame {
 
@@ -37,7 +39,7 @@ public class AssistantFrame extends JFrame {
 
 	public AssistantFrame(int areaWidth) 
 	{
-		assistantTextArea = new AssistantTextArea( areaWidth / 10 );
+		assistantTextArea = new AssistantTextArea( areaWidth / 8 );
 		assistantTextArea.setEditable( false );
 		assistantTextArea.setFont( new Font( Font.MONOSPACED, Font.PLAIN, 12 ) );
 		
@@ -64,16 +66,16 @@ public class AssistantFrame extends JFrame {
 								String message = inputField.getText();
 								if (message.length() > 0) 
 								{
-									assistantTextArea.append("<" + Assistant.getTime() + ">: " + message + "\n");
+									assistantTextArea.append("<" + getTime() + ">: " + message + "\n");
 									assistantTextArea.setCaretPosition(assistantTextArea.getDocument().getLength());
-									Assistant.answer(message);
+									answer(message);
 									inputField.setText("");
 									Assistant.scribe.log(message);
 								}
 								break;
 
 							case KeyEvent.VK_UP:
-								Assistant.executeWrapped(
+								executeWrapped(
 									() -> {
 										String log = Assistant.scribe.upGoThemLogs();
 
@@ -86,7 +88,7 @@ public class AssistantFrame extends JFrame {
 								break;
 
 							case KeyEvent.VK_DOWN:
-								Assistant.executeWrapped(
+								executeWrapped(
 									() -> {
 										String log = Assistant.scribe.downGoThemLogs();
 										if (log != null) 
@@ -169,6 +171,17 @@ public class AssistantFrame extends JFrame {
         JScrollBar sb = assistantScrollArea.getVerticalScrollBar();
         sb.setValue(sb.getMaximum());
 	}
+	
+	private void answer(String input) 
+	{
+		Command.respondToInput(input);
+		scrollDown();
+	}
+
+	private static String getTime()
+	{
+		return new Date().toTimeString();
+	}
 
 	private void placeContent(int areaWidth) 
 	{
@@ -176,6 +189,18 @@ public class AssistantFrame extends JFrame {
 		assistantScrollArea.setBounds(10, 30, areaWidth, 290);
 		inputLabel.setBounds(10, 330, 20, 20);
 		inputField.setBounds(30, 330, areaWidth-20, 20);
+	}
+	
+	private static void executeWrapped(Runnable runnable)
+	{
+		try 
+		{
+			runnable.run();
+		} 
+		catch (Exception e) 
+		{
+			Assistant.error(e.getMessage() + "\n" + Assistant.scribe.getStatus());
+		}
 	}
 
 	private void writeToField(String input) 

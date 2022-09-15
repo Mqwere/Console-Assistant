@@ -2,6 +2,11 @@ package util;
 
 public class Converter
 {
+	public static String makeSureThisIsASingleLine(String allegedLine)
+	{
+		return allegedLine.split("\n")[0];
+	}
+	
 	public static String stringArrayToConcatenatedString(char splitter, String...strings)
 	{
 		String output = "";
@@ -11,7 +16,14 @@ public class Converter
 			output += string + splitter;
 		}
 		
-		return output.substring(0, output.length( ) > 0 ? output.length( ) - 1 : 0);
+		return getStringWithoutTheLastCharacter(output);
+	}
+	
+	public static String getStringWithoutTheLastCharacter(String input)
+	{
+		return input.length() <= 1 
+				? ""
+				: input.substring( 0, input.length() - 1 );
 	}
 	
 	public static String[] getStringSubarrayWithoutFirstElement(String[] input)

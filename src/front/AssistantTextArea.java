@@ -1,6 +1,11 @@
 package front;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.swing.JTextArea;
+
+import util.Converter;
 
 public class AssistantTextArea extends JTextArea
 {
@@ -15,7 +20,9 @@ public class AssistantTextArea extends JTextArea
 	
 	public void append(String senderOfMessage, Object messageToAppend)
 	{
-		super.append(prepareStringForAppending(senderOfMessage, stringify(messageToAppend))+"\n");
+		String toAppend;
+		super.append(toAppend = prepareStringForAppending(senderOfMessage, stringify(messageToAppend))+"\n");
+		System.out.printf("'%s'\n", toAppend);
 	}
 	
 	public void append(Object messageToAppend)
@@ -32,21 +39,26 @@ public class AssistantTextArea extends JTextArea
 			paragraphOffset += 3;
 			outputString = "[" + senderOfMessage +"]:";
 		}
+				
+		List<String> filteredStringLines = Arrays.asList(precuratedString.split("\n"))
+			.stream()
+//			.map( (line) -> { return line.trim(); } )
+//			.filter( ( line ) -> { return !( line.isBlank( ) || line.isEmpty( ) ); } )
+			.toList();
 		
-		String[] precuratedStringLines = precuratedString.split("\n");
 		
-		for(int i = 0; i < precuratedStringLines.length; i++)
+		for(int i = 0; i < filteredStringLines.size(); i++)
 		{
 			outputString += 
-				curateLineToLineLength(precuratedStringLines[i], paragraphOffset) + "\n"
+				curateLineToLineLength(filteredStringLines.get(i), paragraphOffset) + "\n"
 					+ (
-						(i + 1) < precuratedStringLines.length
+						(i + 1) < filteredStringLines.size()
 							? getAStringContainingANumberOfSpaces(paragraphOffset)
 							: ""
 					);
 		}
 		
-		return outputString;
+		return Converter.getStringWithoutTheLastCharacter(outputString);
 	}
 	
 	private String curateLineToLineLength(String uncuratedLine, int paragraphOffset)
@@ -61,7 +73,7 @@ public class AssistantTextArea extends JTextArea
 		{
 			if(currentLineLength + word.length() > LINE_LENGTH)
 			{
-				curatedLine += "\n " + getAStringContainingANumberOfSpaces(paragraphOffset);
+				curatedLine += "\n " + getAStringContainingANumberOfSpaces(paragraphOffset) + word;
 				currentLineLength = paragraphOffset + 1 + word.length();
 			}
 			else

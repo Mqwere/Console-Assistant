@@ -1,15 +1,13 @@
 package core;
 
 import front.AssistantFrame;
-import util.Date;
 import util.Scribe;
 
 public class Assistant {
 	public static AssistantFrame assistantFrame;
 
 	public static Scribe scribe = new Scribe(20);
-	public static final int AREA_WIDTH = 420;
-	public static final int LINE_LENGHT = ((AREA_WIDTH / 10));
+	public static final int AREA_WIDTH = 424;
 	public static String APP_INFO = "        INFO:\n" + "Console Assistant App\n"
 			+ "A smol console assistant\n" + "Project started 27 may 2019\n"
 			+ "Author: Marcin Chrąchol\n";
@@ -53,26 +51,5 @@ public class Assistant {
 	public static void write(String from, Object input) 
 	{
 		assistantFrame.addToArea(from, input);
-	}
-
-	public static void answer(String input) 
-	{
-		Command.respondToInput(input);
-		assistantFrame.scrollDown();
-	}
-	
-	public static void executeWrapped(Runnable runnable)
-	{
-		try {
-			runnable.run();
-		} 
-		catch (Exception e) {
-			Assistant.error(e.getMessage() + "\n" + scribe.getStatus());
-		}
-	}
-
-	public static String getTime()
-	{
-		return new Date().toTimeString();
 	}
 }
